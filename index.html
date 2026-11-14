@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>合租生活管家</title>
+<script src="config.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5ea;--card:#ecebdc;--card2:#fbfaf3;--ink:#232323;--mute:#8b897d;--line:#dcdac8;--pri:#5f9e5c;--pri-d:#4a8448;--pri2:#d9e8cf;--pink:#d63d8f;--pink2:#f7dcea;--blue:#4a86d9;--blue2:#dce8f7;--yel:#f2c14e;--r:20px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Bricolage Grotesque","Noto Sans SC",-apple-system,"PingFang SC",sans-serif;background:#cfe3c4;color:var(--ink);font-size:14px;min-height:100vh;overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;border-radius:50%;background:#bcd9ad;z-index:-1}
+body:before{width:520px;height:520px;left:-160px;top:-180px}
+body:after{width:420px;height:420px;right:-120px;bottom:-140px;background:#e3eed9}
+.hand{font-family:"ZCOOL KuaiLe","Noto Sans SC",cursive}
+.wrap{display:flex;justify-content:center;padding:28px 12px}
+.phone{width:390px;max-width:100%;height:812px;background:var(--bg);border:11px solid #1b1b1b;border-radius:52px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 30px 60px rgba(40,70,30,.25)}
+.island{position:absolute;top:10px;left:50%;transform:translateX(-50%);width:110px;height:30px;background:#111;border-radius:20px;z-index:20}
+.top{padding:2px 20px 6px}
+.mp{height:34px;margin-top:46px;display:flex;align-items:center;justify-content:center;position:relative;flex:none}
+.mp-t{font-size:15px;font-weight:700}
+.cap{position:absolute;right:12px;top:2px;height:30px;border:1px solid #d8d6c6;border-radius:16px;display:flex;align-items:center;padding:0 10px;gap:9px;background:rgba(255,255,255,.6);font-size:12px}
+.cap b{width:1px;height:16px;background:#d0cebd}
+.cap i{font-style:normal;font-weight:800}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.quick div{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:700;cursor:pointer}
+.quick span{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:22px}
+.hello h1{font-size:26px}
+.hello{display:flex;justify-content:space-between;align-items:center}
+.hello h1{font-size:28px;font-weight:500;letter-spacing:-.5px}
+.hello h1 b{font-weight:900}
+.avatars{display:flex}
+.av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:12px;color:#fff;font-weight:700;border:2px solid var(--bg);margin-left:-6px;cursor:pointer;transition:.2s}
+.av.me{transform:translateY(-3px);box-shadow:0 0 0 2px var(--ink)}
+.dates{display:flex;justify-content:space-between;margin-top:14px}
+.dt{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#5d5b52;width:40px;padding:6px 0 7px;border-radius:20px}
+.dt .n{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500}
+.dt.has .n{background:var(--pri2)}
+.dt.on{background:var(--ink);color:#fff}
+.dt.on .n{background:var(--ink);color:#fff;font-weight:800}
+.main{flex:1;overflow-y:auto;padding:8px 18px 120px;scrollbar-width:none}
+.main::-webkit-scrollbar{display:none}
+.hero{display:flex;align-items:flex-end;gap:6px;margin:6px 0 16px;position:relative;min-height:150px}
+.hero .chars{display:flex;align-items:flex-end;gap:2px}
+.bubble{position:relative;background:#e9eddc;border-radius:26px;padding:12px 16px;font-size:14px;line-height:1.45;max-width:200px;margin-left:auto;align-self:flex-start;color:#2d2d2d}
+.bubble:after{content:"";position:absolute;left:22px;bottom:-9px;width:18px;height:18px;background:#e9eddc;border-radius:0 0 18px 0;transform:skewX(-20deg)}
+.ptitle{font-size:26px;font-weight:800;letter-spacing:-.5px;margin:4px 0 2px}
+.psub{font-size:12px;color:var(--mute);margin-bottom:6px}
+.card{background:var(--card2);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card h3{font-size:16px;font-weight:800;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1.5px solid #eeecdf;gap:10px}
+.row:last-child{border-bottom:0}
+.mute{color:var(--mute);font-size:12px;font-weight:400}
+.tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--pri2);color:var(--pri-d);white-space:nowrap}
+.tag.w{background:var(--pink2);color:var(--pink)}.tag.a{background:var(--blue2);color:var(--blue)}
+.btn{border:0;background:var(--pri);color:#fff;border-radius:999px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:transform .1s}
+.btn:active{transform:scale(.95)}
+.btn.s{padding:6px 12px;font-size:12px}.btn.o{background:transparent;color:var(--pri-d);box-shadow:inset 0 0 0 1.5px var(--pri)}.btn.g{background:#e2e0cf;color:var(--ink)}
+.btn.w{background:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border-radius:var(--r);padding:14px}
+.stat .n{font-size:21px;font-weight:800;margin-top:4px;letter-spacing:-.3px}
+.stat.dark{background:var(--ink);color:#fff}.stat.dark .mute{color:#aaa}
+.stat.green{background:var(--pri);color:#fff}.stat.green .mute{color:#e3f0dc}
+.seg{display:flex;background:var(--card);border-radius:999px;padding:4px;margin-bottom:12px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:999px;font-size:13px;cursor:pointer;color:var(--mute);font-family:inherit;font-weight:700}
+.seg button.on{background:var(--ink);color:#fff}
+.bar{height:8px;background:#e6e4d4;border-radius:5px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--pri);border-radius:5px}
+.bar i.low{background:var(--pink)}
+/* task-card alerts */
+.alert{display:flex;gap:12px;align-items:center;padding:12px;border-radius:18px;background:var(--card);margin-bottom:10px;font-size:14px}
+.alert>.ic,.alert:before{flex:none}
+.alert .ib{width:38px;height:38px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+.alert .sep{width:1.5px;align-self:stretch;background:#d7d5c3;margin:0 2px}
+.alert.w{background:#f1e6e4}
+.nav{position:absolute;left:14px;right:14px;bottom:16px;display:flex;background:var(--ink);border-radius:999px;padding:6px;z-index:4}
+.nav button{flex:1;border:0;background:none;padding:8px 0;font-size:12px;color:#a9a79c;cursor:pointer;border-radius:999px;font-family:inherit;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:1px}
+.nav button .i{font-size:16px;filter:grayscale(1) brightness(1.6)}
+.nav button.on{background:var(--pri);color:#fff}
+.nav button.on .i{filter:none}
+.fab{position:absolute;right:20px;bottom:88px;width:54px;height:54px;border-radius:50%;background:var(--ink);color:#fff;font-size:28px;border:0;box-shadow:0 8px 18px rgba(0,0,0,.25);cursor:pointer;z-index:4}
+.sheet{position:absolute;inset:0;background:rgba(35,35,35,.4);display:none;align-items:flex-end;z-index:10}
+.sheet.on{display:flex}
+.sheet .in{background:var(--bg);width:100%;border-radius:30px 30px 0 0;padding:22px 20px 28px;max-height:86%;overflow-y:auto;animation:up .25s ease}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.sheet h2{font-size:20px;font-weight:800;margin-bottom:12px}
+label{display:block;font-size:12px;color:var(--mute);margin:12px 0 6px;font-weight:700}
+input,select,textarea{width:100%;padding:11px 14px;border:0;border-radius:16px;font-size:14px;font-family:inherit;background:var(--card);color:var(--ink);outline:none}
+input:focus,textarea:focus{box-shadow:0 0 0 2px var(--pri)}
+input[type=range]{background:none;padding:0;accent-color:var(--pri)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:7px 13px;border-radius:999px;font-size:13px;cursor:pointer;background:var(--card);font-weight:500}
+.chip.on{background:var(--ink);color:#fff}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.day{border-radius:16px;padding:7px 0;background:var(--card);font-size:11px}
+.day.today{background:var(--ink);color:#fff}.day.today .mute{color:#bbb}
+.day .d{font-weight:800;font-size:14px}
+.toast{position:absolute;left:50%;top:50px;transform:translateX(-50%) translateY(-10px);background:var(--ink);color:#fff;padding:10px 16px;border-radius:999px;font-size:12px;opacity:0;transition:.3s;z-index:30;pointer-events:none;white-space:nowrap;font-weight:700}
+.toast.on{opacity:1;transform:translateX(-50%)}
+/* splash */
+.splash{position:absolute;inset:0;z-index:25;background:var(--ink);color:#fff;z-index:15;padding:80px 26px 30px;overflow:hidden;transition:transform .5s cubic-bezier(.7,0,.3,1)}
+.splash.off{transform:translateY(-105%)}
+.splash h1{font-size:58px;line-height:1;font-weight:900;letter-spacing:-1px}
+.splash h1 em{font-style:normal;color:var(--pri)}
+.splash .big{position:absolute;right:-60px;bottom:40px}
+.splash .bubble{position:absolute;left:26px;bottom:120px;background:#f6f5ea;font-size:18px;max-width:none;transform:rotate(-4deg)}
+.splash .btn{position:absolute;left:26px;bottom:44px;padding:14px 26px;font-size:15px}
+/* celebrate */
+.party{position:absolute;inset:0;background:var(--bg);z-index:14;display:none;flex-direction:column;align-items:center;padding:70px 22px 30px;overflow:hidden}
+.party.on{display:flex}
+.party .conf{position:absolute;inset:0;pointer-events:none}
+.party .conf span{position:absolute;animation:pop .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes pop{from{transform:scale(0) rotate(-90deg);opacity:0}}
+.party .bubble{align-self:flex-end;margin:0 0 0 auto;font-size:18px}
+.party .bubble:after{left:auto;right:40px;transform:skewX(20deg);border-radius:0 0 0 18px}
+.party .hop{animation:hop 1s ease-in-out infinite;margin-top:10px}
+@keyframes hop{50%{transform:translateY(-14px) rotate(-4deg)}}
+.party .shadow{width:120px;height:14px;border-radius:50%;background:#e2e1cf;margin-top:4px}
+.party .pill{background:#e9eddc;border-radius:999px;padding:14px;width:100%;text-align:center;font-weight:700;margin-top:26px}
+.party h4{align-self:flex-start;margin:22px 0 10px;font-size:17px;font-weight:800}
+.party .tip{background:#ecebdc;border-radius:18px;padding:13px 16px;width:100%;margin-bottom:8px;font-size:13px;display:flex;gap:10px}
+.party .btn{width:100%;margin-top:auto;padding:16px;font-size:15px}
+.wiggle{animation:wig 2.4s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes wig{0%,100%{transform:rotate(0)}50%{transform:rotate(-3deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="phone">
+  <div class="island"></div>
+  <div class="mp"><span class="mp-t">合租生活管家</span><span class="cap"><i>•••</i><b></b><i>◉</i></span></div>
+  <div class="top">
+    <div class="hello"><h1>嗨，<b id="meName"></b>！</h1><div class="avatars" id="avatars"></div></div>
+    <div class="dates" id="dates"></div>
+  </div>
+  <div class="main" id="main"></div>
+  <button class="fab" id="fab">＋</button>
+  <div class="nav" id="nav"></div>
+  <div class="sheet" id="sheet"><div class="in" id="sheetIn"></div></div>
+  <div class="party" id="party"></div>
+  <div class="splash" id="splash"></div>
+  <div class="toast" id="toast"></div>
+</div>
+</div>
+<script>
+const COLORS=['#2f6f5e','#c8553d','#d99a2b','#5b6fb5'];
+const today=new Date();today.setHours(0,0,0,0);
+const fmt=d=>`${d.getMonth()+1}/${d.getDate()}`;
+const daysAgo=n=>{const d=new Date(today);d.setDate(d.getDate()-n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const CATS=['房租','水电','网费','日用','聚餐','其他'];
+const defaultState={
+  me:0,members:['小雨','小林','阿杰','Mia'],
+  expenses:[
+    {id:1,title:'11月房租',amount:8800,payer:0,split:[0,1,2,3],cat:'房租',date:daysAgo(14)},
+    {id:2,title:'10月电费',amount:356,payer:1,split:[0,1,2,3],cat:'水电',date:daysAgo(9)},
+    {id:3,title:'网费（季度）',amount:240,payer:2,split:[0,1,2,3],cat:'网费',date:daysAgo(6)},
+    {id:4,title:'超市大采购',amount:186,payer:3,split:[0,1,2,3],cat:'日用',date:daysAgo(3)},
+    {id:5,title:'火锅聚餐（Mia 未参加）',amount:300,payer:0,split:[0,1,2],cat:'聚餐',date:daysAgo(1)},
+  ],
+  paid:[],
+  tasks:[{id:1,name:'厨房台面 & 灶台',icon:'🍳'},{id:2,name:'卫生间',icon:'🚿'},{id:3,name:'客厅吸尘拖地',icon:'🧹'},{id:4,name:'倒垃圾 & 分类',icon:'🗑️'}],
+  done:{},swaps:[],
+  items:[
+    {id:1,name:'卷纸',icon:'🧻',level:20,th:30,next:2},
+    {id:2,name:'洗洁精',icon:'🧴',level:65,th:25,next:1},
+    {id:3,name:'垃圾袋',icon:'🛍️',level:15,th:30,next:0},
+    {id:4,name:'洗衣液',icon:'🫧',level:80,th:25,next:3},
+    {id:5,name:'饮用水桶',icon:'💧',level:40,th:30,next:1},
+  ],
+  rules:[
+    {id:1,cat:'费用',text:'房租每月 1 日前转给垫付人；水电网按人数均摊，账单到达后 3 天内付清',pen:'逾期 3 天以上，当月多承担 5% 水电费',votes:[0,1,2,3],status:'生效'},
+    {id:2,cat:'费用',text:'公共日用品单次超过 100 元需先在群里确认，再计入 AA',pen:'未确认的支出由购买人自行承担',votes:[0,1,2,3],status:'生效'},
+    {id:3,cat:'清洁',text:'按 App 排班每周完成值日，周日 22:00 前打卡；无法完成需提前申请换班',pen:'未完成且未换班，下周加做一次值日',votes:[0,1,2,3],status:'生效'},
+    {id:4,cat:'清洁',text:'用完厨房 2 小时内清洗个人餐具，水槽不过夜',pen:'累计 3 次提醒，承担当周厨房值日',votes:[0,1,2,3],status:'生效'},
+    {id:5,cat:'作息',text:'工作日 23:00 至次日 7:00 公共区域保持安静，外放音乐、视频需戴耳机',pen:'提醒为主，屡次违反在室友会上讨论',votes:[0,1,2,3],status:'生效'},
+    {id:6,cat:'访客',text:'访客留宿需提前 1 天在群里告知，单次不超过 2 晚，每月不超过 4 晚',pen:'超出部分按 20 元/晚计入公共水电',votes:[0,1,2,3],status:'生效'},
+    {id:7,cat:'物品',text:'个人物品不放在公共区域超过 24 小时；冰箱每人一层，公共层只放调料',pen:'超时物品统一放到其房门口',votes:[0,1,2,3],status:'生效'},
+    {id:8,cat:'退租',text:'退租需提前 30 天告知全体室友，并协助找到转租人；押金按入住时交接清单退还',pen:'未提前告知，需承担空置期房租',votes:[0,1,2,3],status:'生效'},
+    {id:9,cat:'物品',text:'洗衣机用完 30 分钟内取出衣物',pen:'其他人可将衣物取出放入其洗衣篮',votes:[1],status:'投票中'},
+  ],
+  ver:1,signed:{0:'2026-11-01',1:'2026-11-01',2:'2026-11-02'},
+  violations:[{rule:3,who:2,date:daysAgo(8),note:'上周客厅未拖地，已加做'}],
+  reminds:[{rule:4,date:daysAgo(2)}],
+  tab:'home',sub:'list'
+};
+let S;
+try{S=JSON.parse(localStorage.getItem('roomie-v3'))}catch(e){}
+if(!S)S=JSON.parse(JSON.stringify(defaultState));
+let save=()=>{try{localStorage.setItem('roomie-v3',JSON.stringify(S))}catch(e){}};
+const $=id=>document.getElementById(id);
+const M=i=>S.members[i];
+const nid=a=>Math.max(0,...a.map(x=>x.id))+1;
+const av=(i,sz=22)=>`<span class="av" style="background:${COLORS[i]};width:${sz}px;height:${sz}px;font-size:${Math.round(sz/2.2)}px;border-width:0;display:inline-flex">${M(i)[0]}</span>`;
+const yuan=n=>'¥'+(Math.round(n*100)/100).toLocaleString();
+function toast(t){const e=$('toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800)}
+function openSheet(h){$('sheetIn').innerHTML=h;$('sheet').classList.add('on')}
+function closeSheet(){$('sheet').classList.remove('on')}
+$('sheet').onclick=e=>{if(e.target.id==='sheet')closeSheet()};
+
+/* ===== 费用 ===== */
+function balances(){
+  const b=S.members.map(()=>0);
+  S.expenses.forEach(e=>{const per=e.amount/e.split.length;b[e.payer]+=e.amount;e.split.forEach(i=>b[i]-=per)});
+  S.paid.forEach(p=>{b[p.from]+=p.amount;b[p.to]-=p.amount});
+  return b.map(x=>Math.round(x*100)/100);
+}
+function settlePlan(){
+  const b=balances(),cr=[],db=[];
+  b.forEach((v,i)=>{if(v>0.01)cr.push([i,v]);else if(v<-0.01)db.push([i,-v])});
+  cr.sort((a,b)=>b[1]-a[1]);db.sort((a,b)=>b[1]-a[1]);
+  const plan=[];let i=0,j=0;
+  while(i<db.length&&j<cr.length){const m=Math.min(db[i][1],cr[j][1]);plan.push({from:db[i][0],to:cr[j][0],amount:Math.round(m*100)/100});db[i][1]-=m;cr[j][1]-=m;if(db[i][1]<0.01)i++;if(cr[j][1]<0.01)j++}
+  return plan;
+}
+function markPaid(f,t,a){S.paid.push({from:f,to:t,amount:a,date:daysAgo(0)});save();render();toast(`已记录 ${M(f)} → ${M(t)} ${yuan(a)}`)}
+function nudge(f,a){toast(`管家已私信提醒 ${M(f)} 支付 ${yuan(a)}`)}
+function addExpenseSheet(pref){
+  pref=pref||{};
+  openSheet(`<h2>记一笔公共支出</h2>
+  <div id="ocrBox" style="display:flex;gap:10px;align-items:center;background:var(--card);border-radius:18px;padding:12px"><span style="font-size:26px">🧾</span><div style="flex:1"><b>拍照识别账单</b><div class="mute">水电燃气账单自动识别金额</div></div>${upBtn('ocrBill(d)','📷 拍照','btn s')}</div>
+  <label>名称</label><input id="eT" value="${pref.title||''}" placeholder="如：11月水费">
+  <label>金额（元）</label><input id="eA" type="number" value="${pref.amount||''}" placeholder="0.00">
+  <label>分类</label><div class="chips" id="eC">${CATS.map((c,i)=>`<span class="chip ${c===(pref.cat||'水电')?'on':''}" onclick="pick(this,'eC')">${c}</span>`).join('')}</div>
+  <label>谁付的钱</label><div class="chips" id="eP">${S.members.map((m,i)=>`<span class="chip ${i===(pref.payer??S.me)?'on':''}" data-i="${i}" onclick="pick(this,'eP')">${m}</span>`).join('')}</div>
+  <label>参与分摊（默认全员均摊，可取消不参与的人）</label><div class="chips" id="eS">${S.members.map((m,i)=>`<span class="chip on" data-i="${i}" onclick="this.classList.toggle('on');prev()">${m}</span>`).join('')}</div>
+  <div class="mute" id="ePrev" style="margin-top:8px"></div>
+  <div style="display:flex;gap:8px;margin-top:16px"><button class="btn g" style="flex:1" onclick="closeSheet()">取消</button><button class="btn" style="flex:2" onclick="saveExp(${pref.itemId||0})">保存并通知室友</button></div>`);
+  $('eA').oninput=prev;prev();
+}
+function pick(el,g){[...$(g).children].forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+function prev(){const a=+$('eA').value||0;const n=[...$('eS').children].filter(c=>c.classList.contains('on')).length;$('ePrev').textContent=n?`每人分摊 ${yuan(a/n)}（${n} 人）`:'请至少选择 1 人'}
+function saveExp(itemId){
+  const title=$('eT').value.trim(),amount=+$('eA').value;
+  const cat=$('eC').querySelector('.on').textContent,payer=+$('eP').querySelector('.on').dataset.i;
+  const split=[...$('eS').children].filter(c=>c.classList.contains('on')).map(c=>+c.dataset.i);
+  if(!title||!amount||!split.length){toast('请填写名称、金额和分摊人');return}
+  S.expenses.unshift({id:nid(S.expenses),title,amount,payer,split,cat,date:daysAgo(0)});
+  if(itemId){const it=S.items.find(x=>x.id===itemId);it.level=100;it.next=(it.next+1)%S.members.length}
+  save();closeSheet();render();toast('已记账，分摊结果已同步给室友');
+}
+function delExp(id){S.expenses=S.expenses.filter(e=>e.id!==id);save();render();toast('已删除')}
+
+/* ===== 值日 ===== */
+function weekStart(off=0){const d=new Date(today);d.setDate(d.getDate()-((d.getDay()+6)%7)+off*7);return d}
+function weekNo(off=0){return Math.round(weekStart(off).getTime()/6048e5)}
+function assignee(ti,off=0){
+  const wk=weekNo(off);let who=((ti+wk)%S.members.length+S.members.length)%S.members.length;
+  const sw=S.swaps.find(s=>s.week===wk&&s.task===S.tasks[ti].id&&s.status==='已同意');
+  return sw?sw.to:who;
+}
+function dutyStat(i){let tot=0,ok=0;for(let off=-3;off<=0;off++)if(!(S.startWeek&&weekNo(off)<S.startWeek))S.tasks.forEach((t,ti)=>{if(assignee(ti,off)===i){tot++;if(S.done[`${weekNo(off)}-${t.id}`])ok++}});return {tot,ok,rate:tot?Math.round(ok/tot*100):100}}
+if(!S._seeded){for(let off=-3;off<0;off++)S.tasks.forEach((t,ti)=>{if(!(off===-1&&ti===2))S.done[`${weekNo(off)}-${t.id}`]=daysAgo(-off*7)});S.done[`${weekNo()}-4`]=daysAgo(1);S._seeded=true;save()}
+function checkIn(tid){S.done[`${weekNo()}-${tid}`]=daysAgo(0);save();render();toast('打卡成功 ✨ 室友会收到通知')}
+function swapSheet(ti){
+  const t=S.tasks[ti];
+  openSheet(`<h2>申请换班：${t.icon} ${t.name}</h2>
+  <label>请谁代班</label><div class="chips" id="sw">${S.members.map((m,i)=>i===S.me?'':`<span class="chip" data-i="${i}" onclick="pick(this,'sw')">${m}</span>`).join('')}</div>
+  <label>原因（可选）</label><input id="swR" placeholder="如：周末出差，下周我帮你做一次">
+  <div class="mute" style="margin-top:8px">对方同意后排班自动更新，并记录一次“欠班”，下次可还</div>
+  <div style="display:flex;gap:8px;margin-top:16px"><button class="btn g" style="flex:1" onclick="closeSheet()">取消</button><button class="btn" style="flex:2" onclick="sendSwap(${t.id})">发送申请</button></div>`);
+}
+function sendSwap(tid){const o=$('sw').querySelector('.on');if(!o){toast('请选择代班室友');return}
+  const to=+o.dataset.i;S.swaps.push({id:nid(S.swaps),week:weekNo(),task:tid,from:S.me,to,status:'待确认',reason:$('swR').value});save();closeSheet();render();toast(`已发送给 ${M(to)}，可点头像切换到对方视角确认`)}
+function swapAns(id,ok){const s=S.swaps.find(x=>x.id===id);s.status=ok?'已同意':'已婉拒';save();render();toast(ok?'已同意代班，排班已更新':'已婉拒')}
+function addTaskSheet(){openSheet(`<h2>新增清洁任务</h2><label>任务名称</label><input id="tN" placeholder="如：阳台浇花"><label>图标</label><div class="chips" id="tI">${['🪴','🧺','🪟','🐱','🧽'].map((x,i)=>`<span class="chip ${i?'':'on'}" onclick="pick(this,'tI')">${x}</span>`).join('')}</div><button class="btn" style="width:100%;margin-top:16px" onclick="saveTask()">加入轮换</button>`)}
+function saveTask(){const n=$('tN').value.trim();if(!n)return toast('请输入名称');S.tasks.push({id:nid(S.tasks),name:n,icon:$('tI').querySelector('.on').textContent});save();closeSheet();render();toast('已加入每周轮换')}
+
+/* ===== 物品 ===== */
+function setLevel(id,v){const it=S.items.find(x=>x.id===id);it.level=+v;save();render();if(it.level<=it.th)toast(`${it.name}余量不足，已提醒 ${M(it.next)} 采购`)}
+function buySheet(id){const it=S.items.find(x=>x.id===id);addExpenseSheet({title:`采购${it.name}`,cat:'日用',payer:S.me,itemId:id})}
+function addItemSheet(){openSheet(`<h2>登记公共物品</h2><label>物品名称</label><input id="iN" placeholder="如：洗手液"><label>图标</label><div class="chips" id="iI">${['🧼','🧽','🍚','🥚','🧂','🪥'].map((x,i)=>`<span class="chip ${i?'':'on'}" onclick="pick(this,'iI')">${x}</span>`).join('')}</div><label>低于多少 % 时提醒</label><input id="iT" type="number" value="25"><button class="btn" style="width:100%;margin-top:16px" onclick="saveItem()">登记</button>`)}
+function saveItem(){const n=$('iN').value.trim();if(!n)return toast('请输入名称');S.items.push({id:nid(S.items),name:n,icon:$('iI').querySelector('.on').textContent,level:100,th:+$('iT').value||25,next:S.me});save();closeSheet();render();toast('已登记')}
+
+/* ===== 公约 ===== */
+const RCATS=['费用','清洁','作息','访客','物品','退租'];
+const RICON={费用:'💰',清洁:'🧽',作息:'🌙',访客:'🚪',物品:'📦',退租:'🔑'};
+function signedCount(){return S.members.filter((m,i)=>S.signed[i]).length}
+function sign(){S.signed[S.me]=daysAgo(0);save();render();toast(signedCount()===S.members.length?'全员签署完成，约定正式生效 ✅':'已签署，等待其他室友')}
+function vote(id){const r=S.rules.find(x=>x.id===id);if(r.votes.includes(S.me))r.votes=r.votes.filter(v=>v!==S.me);else r.votes.push(S.me);
+  const was=r.status;r.status=r.votes.length>S.members.length/2?'生效':'投票中';
+  if(r.status==='生效'&&was!=='生效'){S.ver++;S.signed={};toast(`新条款通过，约定更新为 v${S.ver}，请全员重新签署`)}else toast('已更新投票');save();render()}
+function remind(id){S.reminds.unshift({rule:id,date:daysAgo(0)});save();render();toast('已匿名发送温馨提醒，不会显示是谁发的')}
+function violSheet(id){const r=S.rules.find(x=>x.id===id);openSheet(`<h2>记录违约</h2><div class="card" style="margin:0"><div>${RICON[r.cat]} ${r.text}</div><div class="mute" style="margin-top:4px">处理方式：${r.pen}</div></div>
+  <label>涉及室友</label><div class="chips" id="vW">${S.members.map((m,i)=>`<span class="chip" data-i="${i}" onclick="pick(this,'vW')">${m}</span>`).join('')}</div>
+  <label>情况说明</label><input id="vN" placeholder="客观描述发生了什么">
+  <div class="mute" style="margin-top:8px">记录会通知当事人，对方可补充说明。建议先用“温馨提醒”，多次发生再记录。</div>
+  <div style="display:flex;gap:8px;margin-top:16px"><button class="btn g" style="flex:1" onclick="closeSheet()">取消</button><button class="btn w" style="flex:2" onclick="saveViol(${id})">确认记录</button></div>`)}
+function saveViol(id){const o=$('vW').querySelector('.on');if(!o)return toast('请选择室友');S.violations.unshift({rule:id,who:+o.dataset.i,date:daysAgo(0),note:$('vN').value});save();closeSheet();render();toast('已记录，并按约定处理方式通知当事人')}
+function agreementText(){const act=S.rules.filter(r=>r.status==='生效');let t=`合租室友约定书 v${S.ver}\n成员：${S.members.join('、')}\n\n`;let n=1;
+  RCATS.forEach(c=>{const rs=act.filter(r=>r.cat===c);if(!rs.length)return;t+=`【${c}】\n`;rs.forEach(r=>{t+=`${n++}. ${r.text}\n   违约处理：${r.pen}\n`});t+='\n'});
+  t+='修改规则：任何室友可提议，过半数同意即通过，通过后全员重新签署。\n\n签署：'+S.members.map((m,i)=>`${m}${S.signed[i]?'（'+S.signed[i]+'）':'（未签）'}`).join('、');return t}
+function copyAgreement(){const t=agreementText();try{navigator.clipboard.writeText(t).then(()=>toast('约定书已复制，可粘贴到群里'),()=>showText(t))}catch(e){showText(t)}}
+function showText(t){openSheet(`<h2>约定书全文</h2><textarea rows="16" style="font-size:12px">${t}</textarea><button class="btn" style="width:100%;margin-top:10px" onclick="closeSheet()">关闭</button>`)}
+function addRuleSheet(){openSheet(`<h2>提议新条款</h2><label>类别</label><div class="chips" id="rC">${RCATS.map((c,i)=>`<span class="chip ${i?'':'on'}" onclick="pick(this,'rC')">${RICON[c]} ${c}</span>`).join('')}</div>
+  <label>条款内容（写清时间、数量、标准）</label><textarea id="rT" rows="3" placeholder="如：洗衣机用完 30 分钟内取出衣物"></textarea>
+  <div class="mute" style="margin-top:6px">✗ 模糊：“保持厨房干净”　✓ 明确：“用完厨房 2 小时内洗碗”</div>
+  <label>违约处理方式</label><input id="rP" placeholder="如：加做一次值日 / 先提醒，3 次后讨论">
+  <div class="mute" style="margin-top:8px">过半数同意即通过，通过后全员需重新签署</div>
+  <button class="btn" style="width:100%;margin-top:16px" onclick="saveRule()">发起投票</button>`)}
+function saveRule(){const t=$('rT').value.trim(),p=$('rP').value.trim();if(!t||!p)return toast('请填写条款内容和违约处理方式');
+  S.rules.push({id:nid(S.rules),cat:$('rC').querySelector('.on').textContent.split(' ')[1],text:t,pen:p,votes:[S.me],status:'投票中'});save();closeSheet();render();toast('已发起投票')}
+
+/* ===== 渲染 ===== */
+const TABS=[['home','🏠','首页'],['money','💰','费用'],['duty','🧽','值日'],['items','📦','物品'],['rules','📜','公约']];
+const V={};
+V.home=()=>{
+  const b=balances()[S.me];
+  const myDuty=S.tasks.map((t,ti)=>({t,ti})).filter(x=>assignee(x.ti)===S.me&&!S.done[`${weekNo()}-${x.t.id}`]);
+  const low=S.items.filter(i=>i.level<=i.th),myBuy=low.filter(i=>i.next===S.me);
+  const pend=S.rules.filter(r=>r.status==='投票中'&&!r.votes.includes(S.me));
+  const swaps=S.swaps.filter(s=>s.to===S.me&&s.status==='待确认');
+  const myPay=settlePlan().filter(p=>p.from===S.me);
+  let a=S.signed[S.me]?'':`<div class="alert w">📜<div style="flex:1"><b>室友约定书 v${S.ver}</b> 待你签署<div class="mute">签署后约定对全员生效</div></div><button class="btn s w" onclick="S.tab='rules';render()">去签署</button></div>`;
+  myDuty.forEach(x=>a+=`<div class="alert">${x.t.icon}<div style="flex:1">本周轮到你：<b>${x.t.name}</b><div class="mute">周日 22:00 前完成打卡</div></div><button class="btn s" onclick="checkIn(${x.t.id})">打卡</button></div>`);
+  myPay.forEach(p=>a+=`<div class="alert w">💸<div style="flex:1">需转给 <b>${M(p.to)}</b> ${yuan(p.amount)}</div><button class="btn s w" onclick="paySheet(${p.from},${p.to},${p.amount})">去转账</button></div>`);
+  myBuy.forEach(i=>a+=`<div class="alert w">${i.icon}<div style="flex:1"><b>${i.name}</b> 余量 ${i.level}%，轮到你采购</div><button class="btn s" onclick="buySheet(${i.id})">已买</button></div>`);
+  swaps.forEach(s=>a+=`<div class="alert">🔁<div style="flex:1">${M(s.from)} 请你代班「${S.tasks.find(t=>t.id===s.task).name}」${s.reason?`<div class="mute">${s.reason}</div>`:''}<div style="margin-top:6px"><button class="btn s" onclick="swapAns(${s.id},1)">同意</button> <button class="btn s g" onclick="swapAns(${s.id},0)">婉拒</button></div></div></div>`);
+  pend.forEach(r=>a+=`<div class="alert">🗳️<div style="flex:1">新公约待你投票：「${r.text}」</div><button class="btn s" onclick="vote(${r.id})">同意</button></div>`);
+  if(!a)a='<div class="mute">今天没有待办，享受生活 ☕</div>';
+  const total=S.expenses.reduce((s,e)=>s+e.amount,0);
+  return `<div class="grid2" style="margin-bottom:12px">
+    <div class="stat dark"><div class="mute">我的账户</div><div class="n" style="color:${b>=0?'#9fd59b':'#ff9ccc'}">${b>=0?'应收':'应付'} ${yuan(Math.abs(b))}</div></div>
+    <div class="stat green"><div class="mute">本期家庭支出</div><div class="n">${yuan(total)}</div></div>
+    <div class="stat"><div class="mute">我的值日完成率</div><div class="n">${dutyStat(S.me).rate}%</div></div>
+    <div class="stat"><div class="mute">缺货物品</div><div class="n" style="color:${low.length?'var(--pink)':'inherit'}">${low.length} 件</div></div></div>
+  <div class="card"><h3>我的待办 <span class="tag">${fmt(today)}</span></h3>${a}</div>
+  <div class="card"><h3>本周值日 <span class="mute">${fmt(weekStart())} - ${fmt(new Date(weekStart().getTime()+6*864e5))}</span></h3>${S.tasks.map((t,ti)=>{const w=assignee(ti),d=S.done[`${weekNo()}-${t.id}`];return `<div class="row"><span>${t.icon} ${t.name}</span><span style="display:flex;gap:6px;align-items:center">${av(w)}<span class="tag ${d?'':'a'}">${d?'已完成':'待完成'}</span></span></div>`}).join('')}</div>`;
+};
+V.money=()=>{
+  const seg=`<div class="seg">${[['list','账单'],['settle','结算'],['stat','统计']].map(([k,t])=>`<button class="${S.sub===k?'on':''}" onclick="S.sub='${k}';render()">${t}</button>`).join('')}</div>`;
+  const bal=balances();
+  if(S.sub==='settle'){
+    const plan=settlePlan();
+    return seg+`<div class="card"><h3>每人收支</h3>${bal.map((v,i)=>`<div class="row"><span style="display:flex;gap:8px;align-items:center">${av(i)} ${M(i)}</span><b style="color:${v>=0?'var(--pri)':'var(--pink)'}">${v>=0?'+':''}${yuan(v)}</b></div>`).join('')}</div>
+    <div class="card"><h3>结算建议 <span class="tag">最少 ${plan.length} 笔转账</span></h3>${plan.length?plan.map(p=>`<div class="row"><span style="display:flex;gap:6px;align-items:center">${av(p.from)} → ${av(p.to)} <b>${yuan(p.amount)}</b></span><span>${p.from===S.me?`<button class="btn s" onclick="paySheet(${p.from},${p.to},${p.amount})">扫码转账</button>`:p.to===S.me?`<button class="btn s o" onclick="nudge(${p.from},${p.amount})">提醒</button> <button class="btn s g" onclick="markPaid(${p.from},${p.to},${p.amount})">已收</button>`:'<span class="mute">待处理</span>'}</span></div>`).join(''):'<div class="mute">账已清 🎉</div>'}</div>
+    ${S.paid.length?`<div class="card"><h3>转账记录</h3>${S.paid.slice().reverse().map(p=>`<div class="row"><span>${M(p.from)} → ${M(p.to)}</span><span class="mute">${yuan(p.amount)} · ${p.date.slice(5)}</span></div>`).join('')}</div>`:''}`;
+  }
+  if(S.sub==='stat'){
+    const by={};S.expenses.forEach(e=>by[e.cat]=(by[e.cat]||0)+e.amount);const tot=Object.values(by).reduce((a,b)=>a+b,0)||1;
+    const payBy=S.members.map((m,i)=>S.expenses.filter(e=>e.payer===i).reduce((a,e)=>a+e.amount,0));
+    return seg+`<div class="card"><h3>按分类</h3>${Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([c,v])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between"><span>${c}</span><span>${yuan(v)} · ${Math.round(v/tot*100)}%</span></div><div class="bar"><i style="width:${v/tot*100}%"></i></div></div>`).join('')}</div>
+    <div class="card"><h3>垫付排行</h3>${payBy.map((v,i)=>`<div class="row"><span style="display:flex;gap:8px;align-items:center">${av(i)} ${M(i)}</span><span>${yuan(v)}</span></div>`).join('')}</div>`;
+  }
+  return seg+`<div class="card"><h3>公共账单 <span class="mute">${S.expenses.length} 笔</span></h3>${S.expenses.map(e=>`<div class="row"><div><div>${e.title} <span class="tag">${e.cat}</span></div><div class="mute">${M(e.payer)} 垫付 · ${e.split.length} 人均摊 ${yuan(e.amount/e.split.length)} · ${e.date.slice(5)}</div></div><div style="text-align:right"><b>${yuan(e.amount)}</b>${e.payer===S.me?`<div><a class="mute" style="cursor:pointer" onclick="delExp(${e.id})">删除</a></div>`:''}</div></div>`).join('')}</div>`;
+};
+V.duty=()=>{
+  const ws=weekStart();const names=['一','二','三','四','五','六','日'];
+  return `<div class="card"><h3>本周 <span class="mute">每周一自动轮换</span></h3><div class="week">${names.map((n,i)=>{const d=new Date(ws.getTime()+i*864e5);return `<div class="day ${d.getTime()===today.getTime()?'today':''}"><div class="mute">周${n}</div><div class="d">${d.getDate()}</div></div>`}).join('')}</div></div>
+  <div class="card"><h3>任务分配</h3>${S.tasks.map((t,ti)=>{const w=assignee(ti),d=S.done[`${weekNo()}-${t.id}`];const mine=w===S.me;return `<div class="row"><div><div>${t.icon} ${t.name}</div><div class="mute" style="display:flex;gap:4px;align-items:center;margin-top:3px">${av(w,18)} ${M(w)} ${d?`· ${d.slice(5)} 已打卡`:''} · 下周 ${M(assignee(ti,1))}</div></div><div>${d?'<span class="tag">✓ 完成</span>':mine?`<button class="btn s" onclick="checkIn(${t.id})">打卡</button> <button class="btn s g" onclick="swapSheet(${ti})">换班</button>`:'<span class="tag a">进行中</span>'}</div></div>`}).join('')}</div>
+  <div class="card"><h3>近 4 周完成率</h3>${S.members.map((m,i)=>{const s=dutyStat(i);return `<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;gap:6px;align-items:center">${av(i,18)} ${m}</span><span>${s.ok}/${s.tot} · ${s.rate}%</span></div><div class="bar"><i class="${s.rate<80?'low':''}" style="width:${s.rate}%"></i></div></div>`}).join('')}</div>
+  ${S.swaps.length?`<div class="card"><h3>换班记录</h3>${S.swaps.slice().reverse().map(s=>`<div class="row"><span>${M(s.from)} → ${M(s.to)}：${S.tasks.find(t=>t.id===s.task).name}</span><span class="tag ${s.status==='已同意'?'':'a'}">${s.status}</span></div>`).join('')}</div>`:''}`;
+};
+V.items=()=>{
+  const low=S.items.filter(i=>i.level<=i.th);
+  return (low.length?`<div class="alert w">⚠️<div>${low.map(i=>i.name).join('、')} 快用完了，已提醒负责采购的室友</div></div>`:'')+
+  `<div class="card"><h3>公共物品 <span class="mute">拖动滑块更新余量</span></h3>${S.items.map(it=>{const l=it.level<=it.th;return `<div style="padding:10px 0;border-bottom:1px dashed var(--line)"><div style="display:flex;justify-content:space-between;align-items:center"><span>${it.icon} <b>${it.name}</b> ${l?'<span class="tag w">需补货</span>':''}</span><span class="mute" style="display:flex;gap:4px;align-items:center">下次采购 ${av(it.next,18)} ${M(it.next)}</span></div>
+  <div style="display:flex;gap:10px;align-items:center;margin-top:6px"><input type="range" min="0" max="100" step="5" value="${it.level}" style="flex:1;padding:0" onchange="setLevel(${it.id},this.value)"><span style="width:36px;text-align:right;color:${l?'var(--pink)':'inherit'}">${it.level}%</span><button class="btn s ${l?'':'o'}" onclick="buySheet(${it.id})">已采购</button></div></div>`}).join('')}
+  <div class="mute" style="margin-top:10px">💡 点“已采购”会自动生成一笔费用并 AA 分摊，余量重置，采购人轮到下一位</div></div>`;
+};
+V.rules=()=>{
+  const n=S.members.length,sc=signedCount(),act=S.rules.filter(r=>r.status==='生效');let k=1;
+  return `<div class="card" style="border:2px solid ${sc===n?'var(--pri)':'var(--amber)'}"><h3>📜 室友约定书 v${S.ver} <span class="tag ${sc===n?'':'a'}">${sc===n?'已生效':'签署中 '+sc+'/'+n}</span></h3>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">${S.members.map((m,i)=>`<span style="display:flex;gap:4px;align-items:center;font-size:12px">${av(i,20)} ${m} ${S.signed[i]?'<span style="color:var(--pri)">✓</span>':'<span class="mute">未签</span>'}</span>`).join('')}</div>
+    <div style="display:flex;gap:8px;margin-top:12px">${S.signed[S.me]?'<span class="mute" style="flex:1;align-self:center">你已于 '+S.signed[S.me]+' 签署</span>':'<button class="btn" style="flex:1" onclick="sign()">我已阅读并签署</button>'}<button class="btn o" onclick="copyAgreement()">复制全文</button></div></div>
+  ${RCATS.map(c=>{const rs=act.filter(r=>r.cat===c);if(!rs.length)return'';return `<div class="card"><h3>${RICON[c]} ${c}</h3>${rs.map(r=>`<div class="row" style="align-items:flex-start"><div style="flex:1"><b>${k++}.</b> ${r.text}<div class="mute" style="margin-top:3px">⚖️ 违约处理：${r.pen}</div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn s o" onclick="remind(${r.id})">提醒</button><button class="btn s g" onclick="violSheet(${r.id})">记录</button></div></div>`).join('')}</div>`}).join('')}
+  <div class="card"><h3>新条款投票中</h3>${S.rules.filter(r=>r.status==='投票中').map(r=>{const v=r.votes.includes(S.me);return `<div class="row"><div style="flex:1">${RICON[r.cat]||''} ${r.text}<div class="mute">违约处理：${r.pen}</div><div class="bar"><i style="width:${r.votes.length/n*100}%"></i></div><div class="mute" style="margin-top:3px">${r.votes.length}/${n} 同意（过半通过）：${r.votes.map(i=>M(i)).join('、')}</div></div><button class="btn s ${v?'g':''}" onclick="vote(${r.id})">${v?'撤回':'同意'}</button></div>`}).join('')||'<div class="mute">暂无，点右下角＋提议</div>'}</div>
+  <div class="card"><h3>违约记录 <span class="mute">公开透明</span></h3>${S.violations.map(x=>{const r=S.rules.find(r=>r.id===x.rule);return r?`<div class="row"><div><div>${av(x.who,18)} ${M(x.who)} · ${r.text.slice(0,16)}…</div><div class="mute">${x.note||''} · 处理：${r.pen}</div></div><span class="mute">${x.date.slice(5)}</span></div>`:''}).join('')||'<div class="mute">暂无，大家都很棒 👍</div>'}</div>
+  <div class="card"><h3>近期匿名提醒</h3>${S.reminds.slice(0,5).map(x=>{const r=S.rules.find(r=>r.id===x.rule);return r?`<div class="row"><span>🔔 有室友提醒：${r.text}</span><span class="mute">${x.date.slice(5)}</span></div>`:''}).join('')||'<div class="mute">暂无</div>'}</div>`;
+};
+function reset(){S=JSON.parse(JSON.stringify(defaultState));save();render();toast('已重置')}
+$('fab').onclick=()=>({money:addExpenseSheet,duty:addTaskSheet,items:addItemSheet,rules:addRuleSheet})[S.tab]();
+
+
+/* ===== 角色 & 新 UI ===== */
+const INK='#232323';
+function face(cx,cy,s=1,happy){const e=`<ellipse cx="${cx-12*s}" cy="${cy}" rx="${3*s}" ry="${4.5*s}" fill="${INK}"/><ellipse cx="${cx+12*s}" cy="${cy}" rx="${3*s}" ry="${4.5*s}" fill="${INK}"/>`;
+  const m=happy?`<path d="M${cx-11*s} ${cy+11*s} Q${cx} ${cy+26*s} ${cx+11*s} ${cy+11*s} Z" fill="${INK}"/>`:`<path d="M${cx-10*s} ${cy+12*s} Q${cx} ${cy+22*s} ${cx+10*s} ${cy+12*s}" stroke="${INK}" stroke-width="${3.5*s}" fill="none" stroke-linecap="round"/>`;return e+m}
+const limb=(d)=>`<path d="${d}" stroke="${INK}" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+function mascot(type,size=100,o={}){
+  const legs=o.legs||o.party,arms=o.arms||o.party,h=o.party;
+  let g='';
+  if(type==='house'){
+    g=`<rect x="80" y="20" width="12" height="22" rx="3" fill="#4a8448"/>
+    ${arms?limb('M14 66 Q2 58 4 44')+limb('M106 66 Q118 58 116 44'):''}
+    ${legs?limb('M44 100 L38 116 L30 116')+limb('M76 100 L82 116 L90 116'):''}
+    <path d="M60 10 Q65 10 69 13 L105 43 Q111 48 110 56 L105 92 Q104 101 95 101 L25 101 Q16 101 15 92 L10 56 Q9 48 15 43 L51 13 Q55 10 60 10Z" fill="#5f9e5c"/>
+    <path d="M28 52 Q30 46 36 44" stroke="#8cc287" stroke-width="5" fill="none" stroke-linecap="round"/>
+    ${face(60,60,1,h)}`;
+  }else if(type==='sponge'){
+    g=`${arms?limb('M18 64 Q6 58 6 44')+`<path d="M2 40 l3 -9 M8 40 l1 -10" stroke="${INK}" stroke-width="3" stroke-linecap="round"/>`+limb('M102 64 Q114 70 112 82'):''}
+    ${legs?limb('M42 100 L40 114 L33 114')+limb('M78 100 L80 114 L87 114'):''}
+    <rect x="18" y="38" width="84" height="64" rx="18" fill="#f2c14e"/><rect x="18" y="26" width="84" height="22" rx="11" fill="#5f9e5c"/>
+    <circle cx="32" cy="88" r="4" fill="#e0a93a"/><circle cx="88" cy="62" r="5" fill="#e0a93a"/><circle cx="84" cy="90" r="3" fill="#e0a93a"/>
+    ${face(60,66,.9,h)}`;
+  }else if(type==='coin'){
+    g=`${arms?limb('M24 64 Q8 60 8 46')+limb('M96 64 Q112 60 112 46'):''}
+    ${legs?limb('M48 98 L46 114 L38 114')+limb('M72 98 L74 114 L82 114'):''}
+    <circle cx="60" cy="60" r="40" fill="#f2c14e"/><circle cx="60" cy="60" r="31" fill="none" stroke="#e0a93a" stroke-width="4"/>
+    <path d="M38 40 Q44 32 52 30" stroke="#fbe2a0" stroke-width="5" fill="none" stroke-linecap="round"/>
+    ${face(60,58,.9,h)}`;
+  }else if(type==='box'){
+    g=`${arms?limb('M16 70 Q4 62 6 48')+limb('M104 70 Q116 62 114 48'):''}
+    ${legs?limb('M42 104 L40 116 L33 116')+limb('M78 104 L80 116 L87 116'):''}
+    <path d="M16 40 L60 24 L104 40 L104 96 Q104 104 96 104 L24 104 Q16 104 16 96Z" fill="#7aa7e0"/><path d="M16 40 L60 54 L104 40" stroke="#5a88c4" stroke-width="4" fill="none" stroke-linejoin="round"/><path d="M60 54 L60 104" stroke="#5a88c4" stroke-width="4"/>
+    ${face(38,72,.75,h)}`;
+  }else if(type==='scroll'){
+    g=`${arms?limb('M20 62 Q6 56 8 42')+limb('M100 62 Q114 56 112 42'):''}
+    ${legs?limb('M44 104 L42 116 L35 116')+limb('M76 104 L78 116 L85 116'):''}
+    <rect x="20" y="16" width="80" height="88" rx="14" fill="#fbfaf3" stroke="${INK}" stroke-width="3.5"/>
+    <path d="M36 34 H84 M36 44 H70" stroke="#d63d8f" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="84" cy="88" r="10" fill="#d63d8f"/><path d="M80 88 l3 3 l6 -6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    ${face(56,66,.85,h)}`;
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 120 120" ${o.cls?`class="${o.cls}"`:''}>${g}</svg>`;
+}
+const TABCHAR={home:'house',money:'coin',duty:'sponge',items:'box',rules:'scroll'};
+const TABTITLE={money:['费用 AA','记一笔，自动算清谁欠谁'],duty:['值日排班','每周一自动轮换'],items:['公共物品','余量低于阈值自动提醒'],rules:['室友约定','说清楚，才不会闹矛盾']};
+function homeTip(){
+  if(!S.signed[S.me])return '先签好室友约定书，住得更安心！';
+  const t=S.tasks.find((t,ti)=>assignee(ti)===S.me&&!S.done[`${weekNo()}-${t.id}`]);if(t)return `本周轮到你打扫「${t.name}」，干完就轻松啦！`;
+  const p=settlePlan().find(p=>p.from===S.me);if(p)return `记得转给 ${M(p.to)} ${yuan(p.amount)} 哦～`;
+  const it=S.items.find(i=>i.level<=i.th&&i.next===S.me);if(it)return `${it.name}快没了，这次轮到你买！`;
+  return '今天一切都好，享受合租生活吧！';
+}
+const TIPS={money:'谁垫的钱、谁该转多少，我都记着！',duty:'轮流打扫，谁也不吃亏～',items:'快用完了我会提醒大家！',rules:'规矩写清楚，大家都轻松！'};
+function hero(tab){
+  if(tab==='home')return `<div class="hero"><div class="chars">${mascot('house',130,{cls:'wiggle'})}${mascot('sponge',86,{arms:1,legs:1})}</div><div class="bubble hand" style="position:absolute;right:0;top:0;max-width:180px">${homeTip()}</div></div>`;
+  const [t,s]=TABTITLE[tab];
+  return `<div style="display:flex;align-items:center;gap:6px;margin:4px 0 14px"><div style="flex:1"><div class="ptitle">${t}</div><div class="psub">${s}</div><div class="bubble hand" style="margin:6px 0 0;max-width:none;display:inline-block;font-size:13px">${TIPS[tab]}</div></div>${mascot(TABCHAR[tab],96,{arms:1,legs:1,cls:'wiggle'})}</div>`;
+}
+function datesStrip(){
+  const W=['日','一','二','三','四','五','六'];let h='';
+  for(let k=-3;k<=3;k++){const d=new Date(today);d.setDate(d.getDate()+k);const iso=daysAgo(-k);
+    const has=k<=0&&(Object.values(S.done).includes(iso)||S.expenses.some(e=>e.date===iso));
+    h+=`<div class="dt ${k===0?'on':''} ${has&&k?'has':''}">周${W[d.getDay()]}<span class="n">${d.getDate()}</span></div>`}
+  return h;
+}
+function confetti(){const C=['#d63d8f','#4a86d9','#f2c14e','#5f9e5c','#d63d8f'];let h='';
+  for(let i=0;i<26;i++){const c=C[i%5],x=Math.random()*92,y=Math.random()*55,s=8+Math.random()*12,t=i%3,dl=(Math.random()*.4).toFixed(2);
+    const shape=t===0?`<circle cx="10" cy="10" r="9" fill="${c}"/>`:t===1?`<path d="M10 1 L19 18 L1 18Z" fill="${c}"/>`:`<path d="M10 0 L12.5 7.5 L20 10 L12.5 12.5 L10 20 L7.5 12.5 L0 10 L7.5 7.5Z" fill="${c}"/>`;
+    h+=`<span style="left:${x}%;top:${y}%;animation-delay:${dl}s"><svg width="${s}" height="${s}" viewBox="0 0 20 20" style="transform:rotate(${Math.random()*360}deg)">${shape}</svg></span>`}
+  return h}
+function celebrate(info,tips){$('toast').classList.remove('on');clearTimeout($('toast')._t);
+  $('party').innerHTML=`<div class="conf">${confetti()}</div><div class="bubble hand">干得漂亮！</div>
+  ${mascot('house',190,{party:1,cls:'hop'})}<div class="shadow"></div>
+  <div class="pill">🔔 ${info}</div><h4>小贴士</h4>${tips.map(t=>`<div class="tip">${t}</div>`).join('')}
+  <button class="btn" onclick="$('party').classList.remove('on')">完成</button>`;
+  $('party').classList.add('on');
+}
+function splash(){
+  let seen=false;try{seen=sessionStorage.getItem('roomie-splash')}catch(e){}
+  if(seen){$('splash').classList.add('off');return}
+  $('splash').innerHTML=`<h1>合租<br><em>不吵架</em><br>从约定<br>开始</h1>
+  <svg width="170" height="16" viewBox="0 0 170 16" style="margin-top:14px"><path d="M2 8 Q12 0 22 8 T42 8 T62 8 T82 8 T102 8 T122 8 T142 8 T162 8" stroke="#5f9e5c" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <svg width="60" height="40" style="position:absolute;left:250px;top:70px"><path d="M6 30 L16 18 M22 34 L34 26 M14 12 L18 2" stroke="#5f9e5c" stroke-width="4" stroke-linecap="round"/></svg>
+  <div class="big">${mascot('house',300,{arms:1})}</div>
+  <div class="bubble hand">一起住，更轻松！</div>
+  <button class="btn" onclick="$('splash').classList.add('off');try{sessionStorage.setItem('roomie-splash',1)}catch(e){}">开始使用 →</button>`;
+}
+function decorate(){
+  document.querySelectorAll('#main .alert').forEach(a=>{const f=a.firstChild;if(f&&f.nodeType===3){const s=document.createElement('span');s.className='ib';s.textContent=f.textContent.trim();a.replaceChild(s,f)}
+    const l=a.lastElementChild;if(l&&l.tagName==='BUTTON'){const sp=document.createElement('span');sp.className='sep';a.insertBefore(sp,l)}});
+}
+function render(){
+  $('meName').textContent=M(S.me);
+  $('avatars').innerHTML=S.members.map((m,i)=>`<div class="av ${i===S.me?'me':''}" title="切换为 ${m}" style="background:${COLORS[i]}" onclick="S.me=${i};save();render();toast('已切换为 ${m} 的视角')">${m[0]}</div>`).join('');
+  $('dates').innerHTML=datesStrip();
+  $('nav').innerHTML=TABS.map(([k,i,t])=>`<button class="${S.tab===k?'on':''}" onclick="S.tab='${k}';S.sub='list';save();render()"><span class="i">${i}</span>${t}</button>`).join('');
+  $('fab').style.display=S.tab==='home'?'none':'block';
+  $('main').innerHTML=hero(S.tab)+V[S.tab]()+(S.tab==='home'?`<div style="text-align:center;margin-top:8px"><a class="mute" style="cursor:pointer;text-decoration:underline" onclick="reset()">重置演示数据</a></div>`:'');
+  decorate();
+}
+/* 完成时撒花 */
+const _checkIn=checkIn;checkIn=function(tid){_checkIn(tid);const t=S.tasks.find(x=>x.id===tid);celebrate(`「${t.name}」已打卡，室友已收到通知`,['🧽 下周轮到 '+M(assignee(S.tasks.indexOf(t),1))+'，记得交接清洁用品','📸 拍张照片留档，避免“到底打扫没有”的争议'])};
+const _sign=sign;sign=function(){_sign();if(signedCount()===S.members.length)celebrate(`室友约定书 v${S.ver} 全员签署生效`,['📜 可在约定页一键复制全文发到群里','🗳️ 想改规则？提议新条款，过半同意即可'])};
+const _markPaid=markPaid;markPaid=function(f,t,a){_markPaid(f,t,a);if(!settlePlan().length)celebrate('本期账单已全部结清',['💰 下月房租记得在 1 日前转给垫付人','🧾 水电账单到了直接拍照记一笔'])};
+/* ===== 新功能：收款码 / 拍照识别 / 交接清单 / 邀请与入住签约 ===== */
+COLORS.push('#8e5bb5','#3a9bb0','#b5715b');
+S.qr=S.qr||{};S.pending=S.pending||[];
+S.deposit=S.deposit||{total:8800};
+S.handover=S.handover||{mode:'in',list:[
+  {id:1,room:'客厅',name:'沙发',in:'轻微磨损',out:'',note:'右侧扶手有划痕',ph:{in:[],out:[]}},
+  {id:2,room:'客厅',name:'墙面 & 地板',in:'完好',out:'',note:'',ph:{in:[],out:[]}},
+  {id:3,room:'厨房',name:'冰箱',in:'完好',out:'',note:'',ph:{in:[],out:[]}},
+  {id:4,room:'厨房',name:'燃气灶 & 油烟机',in:'完好',out:'',note:'',ph:{in:[],out:[]}},
+  {id:5,room:'卫生间',name:'热水器',in:'完好',out:'',note:'',ph:{in:[],out:[]}},
+  {id:6,room:'卫生间',name:'洗衣机',in:'完好',out:'',note:'',ph:{in:[],out:[]}},
+  {id:7,room:'公共',name:'门禁卡 & 钥匙（4 套）',in:'完好',out:'',note:'',ph:{in:[],out:[]}},
+],ded:{}};
+const ST=['完好','轻微磨损','损坏','缺失'];
+TABCHAR.handover='box';TABTITLE.handover=['交接清单','入住 / 退租拍照存证，押金分摊有据可依'];TIPS.handover='拍照留证，退押金不扯皮！';
+function readImg(file,cb){const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,320/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.7))};im.src=r.result};r.readAsDataURL(file)}
+const upBtn=(cb,label='📷 拍照',cls='btn s g')=>`<label class="${cls}" style="display:inline-block;margin:0;cursor:pointer;color:inherit">${label}<input type="file" accept="image/*" capture="environment" style="display:none" onchange="if(this.files[0])readImg(this.files[0],d=>{${cb}})"></label>`;
+
+/* 收款码 */
+function fakeQR(seed){let h='';let x=seed*9301+49297;for(let i=0;i<21;i++)for(let j=0;j<21;j++){x=(x*9301+49297)%233280;const f=(i<7&&j<7)||(i<7&&j>13)||(i>13&&j<7);if(f?((i%6===0||j%6===0||i%6===6)||(i%7>1&&i%7<5&&j%7>1&&j%7<5)||(i>13&&(i-14)%6===0)||(j>13&&(j-14)%6===0)):x/233280>.5)h+=`<rect x="${j}" y="${i}" width="1" height="1"/>`}return `<svg viewBox="-1 -1 23 23" width="150" height="150" style="background:#fff;border-radius:12px">${h}</svg>`}
+function qrSheet(){const q=S.qr[S.me]||{};const slot=(k,n,c)=>`<div style="flex:1;background:var(--card);border-radius:18px;padding:14px;text-align:center"><div style="font-weight:800;color:${c};margin-bottom:8px">${n}</div>${q[k]?`<img src="${q[k]}" style="width:100%;border-radius:12px">`:'<div class="mute" style="padding:30px 0">未上传</div>'}<div style="margin-top:8px">${upBtn(`S.qr[S.me]=S.qr[S.me]||{};S.qr[S.me].${k}=d;save();qrSheet();toast('已保存${n}收款码')`,q[k]?'更换':'上传')}</div></div>`;
+  openSheet(`<h2>我的收款码</h2><div class="mute">上传后，室友在结算时可直接扫码转账给你</div><div style="display:flex;gap:10px;margin-top:12px">${slot('wx','微信','#07c160')}${slot('ali','支付宝','#1677ff')}</div><button class="btn" style="width:100%;margin-top:16px" onclick="closeSheet()">完成</button>`)}
+function paySheet(f,t,a,ch='wx'){const q=(S.qr[t]||{})[ch];const nm=ch==='wx'?'微信':'支付宝',col=ch==='wx'?'#07c160':'#1677ff';
+  openSheet(`<h2>转账给 ${M(t)}</h2><div class="seg">${[['wx','微信'],['ali','支付宝']].map(([k,n])=>`<button class="${k===ch?'on':''}" onclick="paySheet(${f},${t},${a},'${k}')">${n}</button>`).join('')}</div>
+  <div style="background:${col};border-radius:24px;padding:20px;text-align:center;color:#fff"><div style="font-weight:700">${M(t)} 的${nm}收款码</div><div style="font-size:30px;font-weight:800;margin:6px 0 12px">${yuan(a)}</div>${q?`<img src="${q}" style="width:170px;border-radius:12px;background:#fff">`:fakeQR(t+(ch==='wx'?1:7))+'<div style="font-size:11px;opacity:.85;margin-top:6px">示例二维码（对方尚未上传收款码）</div>'}</div>
+  <div class="mute" style="margin:10px 0">截图后用${nm}「扫一扫」识别，转账备注：合租结算</div>
+  <button class="btn w" style="width:100%" onclick="closeSheet();markPaid(${f},${t},${a})">我已完成转账</button>`)}
+
+/* 拍照识别账单（演示） */
+function ocrBill(d){$('ocrBox').innerHTML=`<img src="${d}" style="width:64px;height:64px;object-fit:cover;border-radius:12px"><div style="flex:1"><b>AI 识别中…</b><div class="bar"><i style="width:30%;transition:width 1s" id="ocrBar"></i></div></div>`;
+  setTimeout(()=>{const b=$('ocrBar');if(b)b.style.width='100%'},30);
+  setTimeout(()=>{if(!$('eT'))return;const kinds=[['电费',260,420],['水费',60,140],['燃气费',80,180]];const k=kinds[Math.floor(Math.random()*3)];const amt=(k[1]+Math.random()*(k[2]-k[1])).toFixed(2);
+    const m=today.getMonth();$('eT').value=`${m===0?12:m}月${k[0]}`;$('eA').value=amt;[...$('eC').children].forEach(c=>c.classList.toggle('on',c.textContent==='水电'));prev();
+    $('ocrBox').innerHTML=`<img src="${d}" style="width:64px;height:64px;object-fit:cover;border-radius:12px"><div style="flex:1"><b>已识别：${k[0]} ${yuan(+amt)}</b><div class="mute">已自动填入，请核对后保存（演示版为模拟识别结果）</div></div>`},1300)}
+
+/* 交接清单 & 押金 */
+function hoSet(id,k,v){const it=S.handover.list.find(x=>x.id===id);it[k]=v;save();render()}
+function hoPhoto(id,d){const it=S.handover.list.find(x=>x.id===id);it.ph[S.handover.mode].push(d);save();render();toast('照片已存证，带时间戳')}
+function hoAddSheet(){openSheet(`<h2>添加交接项</h2><label>区域</label><div class="chips" id="hR">${['客厅','厨房','卫生间','公共',...S.members.map(m=>m+'卧室')].map((r,i)=>`<span class="chip ${i?'':'on'}" onclick="pick(this,'hR')">${r}</span>`).join('')}</div><label>物品 / 设施</label><input id="hN" placeholder="如：空调遥控器"><button class="btn" style="width:100%;margin-top:16px" onclick="hoAdd()">添加</button>`)}
+function hoAdd(){const n=$('hN').value.trim();if(!n)return toast('请输入名称');S.handover.list.push({id:nid(S.handover.list),room:$('hR').querySelector('.on').textContent,name:n,in:'完好',out:'',note:'',ph:{in:[],out:[]}});save();closeSheet();render()}
+function needDed(it){return it.out&&ST.indexOf(it.out)>ST.indexOf(it.in)&&it.out!=='轻微磨损'}
+function depositCalc(){const n=S.members.length,per=S.deposit.total/n,r=S.members.map(()=>per);let tot=0;
+  S.handover.list.forEach(it=>{if(!needDed(it))return;const d=S.handover.ded[it.id]||{cost:0,resp:-1};const c=+d.cost||0;tot+=c;if(d.resp<0)r.forEach((v,i)=>r[i]-=c/n);else r[d.resp]-=c});return {per,r,tot}}
+function setDed(id,k,v){S.handover.ded[id]=S.handover.ded[id]||{cost:0,resp:-1};S.handover.ded[id][k]=k==='resp'?+v:v;save();render()}
+V.handover=()=>{const H=S.handover,md=H.mode,rooms=[...new Set(H.list.map(x=>x.room))];
+  const filled=H.list.filter(x=>md==='in'?x.ph.in.length:x.out).length;
+  let h=`<div class="seg">${[['in','🏠 入住交接'],['out','📦 退租交接']].map(([k,t])=>`<button class="${md===k?'on':''}" onclick="S.handover.mode='${k}';save();render()">${t}</button>`).join('')}</div>
+  <div class="card"><h3>进度 <span class="tag">${filled}/${H.list.length} 项${md==='in'?'已拍照':'已检查'}</span></h3><div class="bar"><i style="width:${filled/H.list.length*100}%"></i></div><div class="mute" style="margin-top:8px">${md==='in'?'入住时逐项拍照，记录原始状态，全员可见、不可删除':'退租时与入住记录逐项对比，新增损坏才计入押金扣除'}</div></div>`;
+  rooms.forEach(rm=>{h+=`<div class="card"><h3>${rm}</h3>${H.list.filter(x=>x.room===rm).map(it=>{const ph=it.ph[md];const d=S.handover.ded[it.id]||{cost:'',resp:-1};
+    return `<div style="padding:10px 0;border-bottom:1.5px solid #eeecdf"><div style="display:flex;justify-content:space-between;align-items:center"><b>${it.name}</b>${md==='out'?`<span class="mute">入住时：${it.in}</span>`:''}</div>
+    <div class="chips" style="margin-top:8px">${ST.map(s=>`<span class="chip ${(md==='in'?it.in:it.out)===s?'on':''}" onclick="hoSet(${it.id},'${md}','${s}')">${s}</span>`).join('')}</div>
+    <div style="display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap">${ph.map(p=>`<img src="${p}" style="width:46px;height:46px;object-fit:cover;border-radius:10px">`).join('')}${upBtn(`hoPhoto(${it.id},d)`,ph.length?'＋':'📷 拍照存证')}${md==='in'&&it.note?`<span class="mute">备注：${it.note}</span>`:''}</div>
+    ${md==='out'&&needDed(it)?`<div style="background:var(--pink2);border-radius:14px;padding:10px;margin-top:8px"><div style="font-size:12px;font-weight:700;color:var(--pink)">新增损坏，需从押金扣除</div><div style="display:flex;gap:6px;margin-top:6px"><input type="number" placeholder="维修金额" value="${d.cost}" style="flex:1;background:#fff" onchange="setDed(${it.id},'cost',this.value)"><select style="flex:1;background:#fff" onchange="setDed(${it.id},'resp',this.value)"><option value="-1" ${d.resp<0?'selected':''}>全员共担</option>${S.members.map((m,i)=>`<option value="${i}" ${d.resp===i?'selected':''}>${m} 承担</option>`).join('')}</select></div></div>`:''}</div>`}).join('')}</div>`});
+  const c=depositCalc();
+  h+=`<div class="card"><h3>押金分摊 <span class="mute">总押金 ${yuan(S.deposit.total)}</span></h3>${S.members.map((m,i)=>`<div class="row"><span style="display:flex;gap:6px;align-items:center">${av(i,20)} ${m}</span><span><span class="mute">应退 </span><b>${yuan(c.r[i])}</b>${c.per-c.r[i]>0.01?` <span class="tag w">扣 ${yuan(c.per-c.r[i])}</span>`:''}</span></div>`).join('')}<div class="mute" style="margin-top:8px">每人押金 ${yuan(c.per)}；${c.tot?`共扣除 ${yuan(c.tot)}，个人责任由个人承担，无法确定责任的全员均摊`:'暂无扣除项'}</div></div>`;
+  return h};
+
+/* 邀请 & 新室友签约 */
+function inviteSheet(){openSheet(`<h2>邀请室友</h2><div style="background:#ededed;border-radius:22px;padding:14px">
+  <div class="mute" style="text-align:center;margin-bottom:10px">合租群（${S.members.length}）</div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;align-items:flex-start"><div style="background:#fff;border-radius:10px;width:230px;padding:10px;box-shadow:0 1px 2px rgba(0,0,0,.08)">
+   <div style="font-size:11px;color:#888;display:flex;gap:4px;align-items:center"><span style="width:14px;height:14px;border-radius:50%;background:var(--pri);display:inline-block"></span>合租生活管家</div>
+   <div style="font-size:14px;margin:6px 0;font-weight:500">${M(S.me)} 邀请你加入「${houseName()}」</div>
+   <div style="background:var(--pri2);border-radius:6px;height:120px;display:flex;align-items:flex-end;justify-content:center">${mascot('house',110,{arms:1})}</div>
+   <div style="font-size:10px;color:#888;border-top:1px solid #eee;margin-top:8px;padding-top:6px">🔗 小程序</div></div>${av(S.me,34)}</div></div>
+  <div style="display:flex;gap:8px;margin-top:14px"><button class="btn o" style="flex:1" onclick="toast('已生成邀请卡片，转发到微信群即可')">发送到微信群</button><button class="btn" style="flex:1" onclick="joinSheet()">模拟室友点击加入</button></div>
+  <div class="mute" style="margin-top:10px">室友点开卡片 → 微信一键授权 → 阅读并签署室友约定书 → 进入合租屋</div>`)}
+function joinSheet(){openSheet(`<h2>加入「${houseName()}」</h2><div style="text-align:center">${mascot('house',110,{arms:1,legs:1})}</div><label>你的昵称</label><input id="jN" placeholder="如：小周" value="小周"><button class="btn" style="width:100%;margin-top:14px;background:#07c160" onclick="doJoin()">微信授权并加入</button>`)}
+function doJoin(){const n=$('jN').value.trim();if(!n)return toast('请输入昵称');S.members.push(n);const i=S.members.length-1;S.pending.push(i);S.me=i;S.tab='home';save();closeSheet();render();$('main').scrollTop=0;toast(`已切换为新室友 ${n} 的视角`)}
+function joinSign(){S.signed[S.me]=daysAgo(0);S.pending=S.pending.filter(x=>x!==S.me);save();render();celebrate(`欢迎 ${M(S.me)} 加入合租屋`,['🧽 下周起你将加入值日轮换','💰 你的费用从加入当天开始分摊'])}
+function gate(){const act=S.rules.filter(r=>r.status==='生效');let k=1;
+  return `<div style="text-align:center;margin:10px 0">${mascot('house',120,{arms:1,cls:'wiggle'})}</div><div class="ptitle" style="text-align:center">欢迎加入！</div><div class="psub" style="text-align:center">签署室友约定书后即可进入合租屋</div>
+  <div class="card">${RCATS.map(c=>{const rs=act.filter(r=>r.cat===c);return rs.length?`<div style="font-weight:800;margin:8px 0 4px">${RICON[c]} ${c}</div>`+rs.map(r=>`<div style="font-size:13px;margin-bottom:6px">${k++}. ${r.text}<div class="mute">违约处理：${r.pen}</div></div>`).join(''):''}).join('')}</div>
+  <label style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--ink)"><input type="checkbox" id="gC" style="width:auto"> 我已阅读并同意以上全部条款</label>
+  <button class="btn" style="width:100%;margin-top:10px" onclick="if(!$('gC').checked)return toast('请先勾选同意');joinSign()">签署并进入合租屋</button>`}
+
+/* 渲染增强 */
+const _render=render;render=function(){
+  if(S.pending.includes(S.me)){_render();$('main').innerHTML=gate();$('main').scrollTop=0;$('nav').style.display='none';$('fab').style.display='none';return}
+  $('nav').style.display='';_render();
+  if(S.tab==='handover'){$('nav').querySelectorAll('button').forEach(b=>b.classList.remove('on'))}
+  if(S.tab==='home'){const g=document.createElement('div');g.className='quick';g.innerHTML=[['👋','邀请室友','inviteSheet()','#07c160'],['📋','交接清单',"S.tab='handover';render()",'var(--blue)'],['🧾','拍账单',"addExpenseSheet()",'var(--yel)'],['💳','收款码','qrSheet()','var(--pink)']].map(([i,t,f,c])=>`<div onclick="${f}"><span style="background:${c}">${i}</span>${t}</div>`).join('');
+    const st=$('main').querySelector('.grid2');st&&st.after(g);
+    const pend=S.pending.filter(i=>i!==S.me);if(pend.length){const a=document.createElement('div');a.className='alert';a.innerHTML=`<span class="ib">🆕</span><div style="flex:1">新室友 <b>${pend.map(M).join('、')}</b> 已加入，待签署约定书</div>`;g.after(a)}}
+  if(S.tab==='handover'){$('fab').style.display='block'}
+};
+const _fab=$('fab').onclick;$('fab').onclick=()=>S.tab==='handover'?hoAddSheet():_fab();
+
+/* ===== 真实模式：Supabase 多人同步 ===== */
+const CFG=window.ROOMIE_CONFIG||{};
+const REAL=!!(CFG.supabaseUrl&&CFG.supabaseAnonKey);
+const SHARED=['houseName','startWeek','members','uids','expenses','paid','tasks','done','swaps','items','rules','ver','signed','violations','reminds','qr','pending','deposit','handover'];
+let sb=null,UID=null,HOUSE=null,synced={},syncChain=Promise.resolve(),syncTimer=null,channel=null;
+const houseName=()=>S.houseName||'幸福里 3室1厅';
+const LP=(()=>{try{return JSON.parse(localStorage.getItem('roomie-real')||'{}')}catch(e){return{}}})();
+const saveLP=()=>{try{localStorage.setItem('roomie-real',JSON.stringify(LP))}catch(e){}};
+
+function templateState(name,nick){
+  const T=JSON.parse(JSON.stringify(defaultState));
+  return {houseName:name,members:[nick],uids:[UID],expenses:[],paid:[],
+    tasks:T.tasks,done:{},swaps:[],
+    items:T.items.map(i=>({...i,level:100,next:0})),
+    rules:T.rules.filter(r=>r.status==='生效').map(r=>({...r,votes:[0]})),
+    ver:1,startWeek:weekNo(),signed:{0:daysAgo(0)},violations:[],reminds:[],qr:{},pending:[],deposit:{total:0},
+    handover:{mode:'in',ded:{},list:S.handover.list.map(x=>({...x,in:'完好',out:'',note:'',ph:{in:[],out:[]}}))}};
+}
+function applyRemote(docs){
+  const local={tab:S.tab||'home',sub:'list',_seeded:true};
+  S=Object.assign(local,templateState('',''),{members:[],uids:[]});
+  docs.forEach(d=>{S[d.key]=d.value;synced[d.key]=JSON.stringify(d.value)});
+  S.me=Math.max(0,S.uids.indexOf(UID));
+}
+function realSave(){try{LP.tab=S.tab;saveLP()}catch(e){}clearTimeout(syncTimer);syncTimer=setTimeout(pushChanges,250)}
+function pushChanges(){
+  if(!HOUSE)return;
+  const rows=[];SHARED.forEach(k=>{if(S[k]===undefined)return;const js=JSON.stringify(S[k]);if(js!==synced[k]){rows.push({house_id:HOUSE.id,key:k,value:S[k]});synced[k]=js}});
+  if(!rows.length)return;
+  syncChain=syncChain.then(async()=>{const {error}=await sb.from('house_docs').upsert(rows,{onConflict:'house_id,key'});
+    if(error){rows.forEach(r=>delete synced[r.key]);toast('同步失败，请检查网络后再操作一次')}}).catch(()=>toast('同步失败，请检查网络'));
+}
+function onRemote(p){const r=p.new;if(!r||!r.key)return;const js=JSON.stringify(r.value);if(js===synced[r.key])return;
+  S[r.key]=r.value;synced[r.key]=js;S.me=Math.max(0,(S.uids||[]).indexOf(UID));render();}
+function subscribe(){if(channel)return;channel=sb.channel('house-'+HOUSE.id)
+  .on('postgres_changes',{event:'*',schema:'public',table:'house_docs',filter:'house_id=eq.'+HOUSE.id},onRemote).subscribe();}
+
+async function loadHouse(h){
+  HOUSE=h;LP.houseId=h.id;saveLP();
+  const {data,error}=await sb.from('house_docs').select('key,value').eq('house_id',h.id);
+  if(error)throw error;
+  applyRemote(data||[]);subscribe();
+}
+function loading(t){$('main').innerHTML=`<div style="text-align:center;padding-top:80px">${mascot('house',120,{cls:'wiggle'})}<div class="psub" style="margin-top:12px">${t}</div></div>`}
+
+function realSplash(){
+  const code=new URLSearchParams(location.search).get('join');
+  $('splash').classList.remove('off');
+  $('splash').innerHTML=`<h1>合租<br><em>不吵架</em><br>从约定<br>开始</h1>
+  <svg width="170" height="16" viewBox="0 0 170 16" style="margin-top:14px"><path d="M2 8 Q12 0 22 8 T42 8 T62 8 T82 8 T102 8 T122 8 T142 8 T162 8" stroke="#5f9e5c" stroke-width="4" fill="none" stroke-linecap="round"/></svg>
+  <div class="big" style="bottom:150px">${mascot('house',260,{arms:1})}</div>
+  <div style="position:absolute;left:26px;right:26px;bottom:40px;display:flex;flex-direction:column;gap:10px">
+   ${code?`<div class="bubble hand" style="position:static;transform:none;align-self:flex-start">室友邀请你加入合租屋！</div>`:''}
+   <button class="btn" style="position:static;padding:15px" onclick="${code?`joinByCode('${code.replace(/[^a-zA-Z0-9]/g,'')}')`:'createSheet()'}">${code?'加入合租屋 →':'创建我的合租屋 →'}</button>
+   <button class="btn g" style="position:static;padding:13px;background:#3a3a3a;color:#fff" onclick="${code?'createSheet()':'codeSheet()'}">${code?'我要自己创建一个':'我有邀请码'}</button>
+  </div>`;
+}
+function createSheet(){openSheet(`<h2>创建合租屋</h2><label>合租屋名称</label><input id="cH" placeholder="如：幸福里 3室1厅" value=""><label>你的昵称</label><input id="cN" placeholder="室友怎么称呼你"><div class="mute" style="margin-top:8px">会自动带上常用的清洁任务、公共物品和室友约定模板，之后都能改</div><button class="btn" style="width:100%;margin-top:16px" onclick="doCreate()">创建</button>`)}
+function codeSheet(){openSheet(`<h2>输入邀请码</h2><input id="cC" placeholder="6 位邀请码" style="font-size:20px;letter-spacing:4px;text-align:center"><button class="btn" style="width:100%;margin-top:16px" onclick="joinByCode($('cC').value)">加入</button>`)}
+async function doCreate(){const n=$('cH').value.trim(),k=$('cN').value.trim();if(!n||!k)return toast('请填写名称和昵称');
+  closeSheet();$('splash').classList.add('off');loading('正在创建合租屋…');
+  const {data,error}=await sb.rpc('create_house',{p_name:n});if(error){toast('创建失败：'+error.message);return realSplash()}
+  HOUSE=data;LP.houseId=data.id;saveLP();S=Object.assign({tab:'home',sub:'list',_seeded:true,me:0},templateState(n,k));synced={};
+  pushChanges();subscribe();history.replaceState(null,'',location.pathname);render();
+  celebrate(`「${n}」创建成功`,['👋 首页点「邀请室友」，把链接发到合租群','📜 约定书已按模板生成，可在约定页增删条款'])}
+async function joinByCode(code){code=(code||'').trim();if(!code)return toast('请输入邀请码');
+  closeSheet();$('splash').classList.add('off');loading('正在加入…');
+  const {data,error}=await sb.rpc('join_house',{p_code:code});
+  if(error){toast(/invalid/.test(error.message)?'邀请码无效，请向室友确认':'加入失败：'+error.message);return realSplash()}
+  history.replaceState(null,'',location.pathname);
+  await loadHouse(data);
+  if(S.uids.includes(UID)){render();return}
+  openSheet(`<h2>加入「${data.name}」</h2><div style="text-align:center">${mascot('house',100,{arms:1,legs:1})}</div><label>你的昵称</label><input id="jN" placeholder="室友怎么称呼你"><button class="btn" style="width:100%;margin-top:14px" onclick="realJoin()">下一步：阅读室友约定</button>`);render()}
+function realJoin(){const n=$('jN').value.trim();if(!n)return toast('请输入昵称');
+  S.members.push(n);S.uids.push(UID);const i=S.members.length-1;S.pending.push(i);S.me=i;S.tab='home';save();closeSheet();render();$('main').scrollTop=0}
+
+function realInviteSheet(){const link=`${location.origin}${location.pathname}?join=${HOUSE.invite_code}`;
+  openSheet(`<h2>邀请室友</h2><div style="background:var(--card);border-radius:20px;padding:18px;text-align:center"><div class="mute">邀请码</div><div style="font-size:34px;font-weight:800;letter-spacing:6px;margin:4px 0">${HOUSE.invite_code.toUpperCase()}</div><div class="mute" style="word-break:break-all">${link}</div></div>
+  <button class="btn" style="width:100%;margin-top:12px" onclick="copyText('${link}','合租屋「${houseName()}」邀请你加入，点链接即可：')">复制邀请链接</button>
+  <div class="mute" style="margin-top:10px">把链接发到微信合租群，室友点开 → 填昵称 → 签署约定书，就会出现在这里</div>`)}
+function copyText(link,pre){const t=pre+link;try{navigator.clipboard.writeText(t).then(()=>toast('已复制，去微信群粘贴吧'),()=>showText(t))}catch(e){showText(t)}}
+
+async function boot(){
+  if(!REAL){splash();render();return}
+  save=realSave;inviteSheet=realInviteSheet;reset=()=>toast('真实合租屋不能重置');
+  const _r=render;render=function(){_r();
+    $('avatars').querySelectorAll('.av').forEach(a=>{a.onclick=null;a.style.cursor='default'});
+    const rl=[...$('main').querySelectorAll('a')].find(a=>a.textContent==='重置演示数据');if(rl)rl.parentElement.remove();};
+  $('splash').classList.add('off');loading('连接中…');
+  const lib=document.createElement('script');lib.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  lib.onerror=()=>loading('网络连接失败，请刷新重试');
+  lib.onload=async()=>{
+    try{
+      sb=supabase.createClient(CFG.supabaseUrl,CFG.supabaseAnonKey);
+      let {data:{session}}=await sb.auth.getSession();
+      if(!session){const r=await sb.auth.signInAnonymously();if(r.error)throw r.error;session=r.data.session}
+      UID=session.user.id;
+      const code=new URLSearchParams(location.search).get('join');
+      const {data:hs}=await sb.from('houses').select('*');
+      const mine=(hs||[]).find(h=>h.id===LP.houseId)||(hs||[])[0];
+      if(mine&&!code){await loadHouse(mine);if(LP.tab)S.tab=LP.tab;render();return}
+      if(code&&mine&&mine.invite_code===code.toLowerCase()){history.replaceState(null,'',location.pathname);await loadHouse(mine);render();return}
+      realSplash();
+    }catch(e){console.error(e);loading('连接失败：'+(e.message||e)+'<br>请确认 Supabase 已开启匿名登录并执行了建表脚本')}
+  };
+  document.head.appendChild(lib);
+}
+
+boot();
+</script>
+</body>
+</html>
